@@ -11,7 +11,7 @@ sudo apt install nginx -y
 # Step 3: Allow Nginx Through the Firewall
 echo "Configuring the firewall..."
 sudo ufw allow 'Nginx Full'
-sudo ufw allow 'Nginx Full'
+sudo ufw allow ssh
 sudo ufw enable
 
 # Step 4: Install MySQL
