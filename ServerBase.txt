@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Step 1: Update and Upgrade the System
+echo "Updating and upgrading the system..."
+sudo apt update -y && sudo apt upgrade -y
+
+# Step 2: Install Nginx
+echo "Installing Nginx..."
+sudo apt install nginx -y
+
+# Step 3: Allow Nginx Through the Firewall
+echo "Configuring the firewall..."
+sudo ufw allow 'Nginx Full'
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+
+# Step 4: Install MySQL
+echo "Installing MySQL Server..."
+sudo apt install mysql-server -y
+
+# Step 5: Secure MySQL Installation
+echo "Securing MySQL installation..."
+sudo mysql_secure_installation
+
+# Step 7: Install PHP
+echo "Installing PHP and PHP extensions..."
+sudo apt install php-fpm php-mysql php-cli php -y
+
+# Step 8: Configure Nginx to Use PHP Processor
+echo "Configuring Nginx to use PHP processor..."
+cat <<EOL | sudo tee /etc/nginx/sites-available/default
+server {
+    listen 80;
+    root /var/www/html;
+    index index.php index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+
+    location ~ \.php\$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+EOL
+
+# Step 9: Restart Nginx to Apply Changes
+echo "Restarting Nginx..."
+sudo systemctl restart nginx
+
+# Step 11: Test PHP with Nginx
+echo "Creating PHP test file..."
+cat <<EOL | sudo tee /var/www/html/info.php
+<?php
+phpinfo();
+?>
+EOL
+
+# Step 12: Display final message
+echo "LEMP stack installation and configuration complete."
+echo "You can verify PHP is working by visiting http://your_server_ip/info.php in your browser."
+
